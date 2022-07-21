@@ -50,7 +50,8 @@ class AnomalyDataset(Dataset):
  
         if item['gt_name']:
             gt_path = os.path.join(self.gt_dir, item['gt_name'])
-            gt = Image.open(gt_path)
+            #gt = Image.open(gt_path)
+            gt = Image.new('L', image.size, color=0)
         else:
             gt = Image.new('L', image.size, color=0)
 
