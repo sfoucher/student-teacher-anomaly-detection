@@ -89,7 +89,7 @@ function process_dataset {
 	log "Done!\\n"
 }
 
-prepare_dir
-download_dataset
+#prepare_dir
+#download_dataset
 extract_dataset
 process_dataset
