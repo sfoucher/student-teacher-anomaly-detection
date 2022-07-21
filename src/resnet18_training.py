@@ -52,7 +52,7 @@ def train(args):
                           momentum=args.momentum)
 
     # Load training data
-    dataset = AnomalyDataset(root_dir=f'../data/{args.dataset}/img',
+    dataset = AnomalyDataset(root_dir=f'../data/{args.dataset}',
                              transform=transforms.Compose([
                                 transforms.Resize((args.image_size, args.image_size)),
                                 transforms.RandomHorizontalFlip(),
