@@ -99,15 +99,15 @@ def get_score_map(inputs, teacher, students, params):
     return score_map
 
 
-def visualize(img, gt, score_map, max_score):
-    plt.figure(figsize=(13, 3))
+def visualize(img, gt, score_map, max_score, b):
+    fig= plt.figure(figsize=(13, 3))
     plt.subplot(1, 3, 1)
     plt.imshow(img)
     plt.title(f'Original image')
 
-    plt.subplot(1, 3, 2)
-    plt.imshow(gt, cmap='gray')
-    plt.title(f'Ground thuth anomaly')
+    #plt.subplot(1, 3, 2)
+    #plt.imshow(gt, cmap='gray')
+    #plt.title(f'Ground thuth anomaly')
 
     plt.subplot(1, 3, 3)
     plt.imshow(score_map, cmap='jet')
@@ -117,8 +117,8 @@ def visualize(img, gt, score_map, max_score):
     plt.title('Anomaly map')
 
     plt.clim(0, max_score)
-    plt.show(block=True)
-
+    #plt.show(block=True)
+    plt.savefig(f'/content/test{b}.png')
 
 def detect_anomaly(args):
     # Choosing device 
@@ -142,7 +142,7 @@ def detect_anomaly(args):
         load_model(students[i], model_name)
 
     # calibration on anomaly-free dataset
-    calib_dataset = AnomalyDataset(root_dir=f'../data/{args.dataset}',
+    calib_dataset = AnomalyDataset(root_dir=f'/content/student-teacher-anomaly-detection/data/{args.dataset}',
                                     transform=transforms.Compose([
                                         transforms.Resize((args.image_size, args.image_size)),
                                         transforms.ToTensor(),
@@ -159,7 +159,7 @@ def detect_anomaly(args):
 
 
     # Load testing data
-    test_dataset = AnomalyDataset(root_dir=f'../data/{args.dataset}',
+    test_dataset = AnomalyDataset(root_dir=f'/content/student-teacher-anomaly-detection/data/{args.dataset}',
                                   transform=transforms.Compose([
                                     transforms.Resize((args.image_size, args.image_size)),
                                     transforms.ToTensor(),
@@ -197,10 +197,11 @@ def detect_anomaly(args):
             gt_in = rearrange(gt, 'b c h w -> b h w c')
 
             for b in range(args.batch_size):
+                n= args.batch_size * i + b
                 visualize(img_in[b, :, :, :].squeeze(), 
                           gt_in[b, :, :, :].squeeze(), 
                           score_map[b, :, :].squeeze(), 
-                          max_score)
+                          max_score,n)
     
     # AUC ROC
     fpr, tpr, thresholds = roc_curve(y_true.astype(int), y_score)
@@ -212,7 +213,8 @@ def detect_anomaly(args):
     plt.ylabel('TPR')
     plt.legend()
     plt.grid()
-    plt.show()
+    #plt.show()
+    plt.savefig('/content/ROC.png')
 
 
 if __name__ == '__main__':
