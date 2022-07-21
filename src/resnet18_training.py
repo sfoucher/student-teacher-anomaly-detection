@@ -36,7 +36,8 @@ def train(args):
     # Choosing device 
     device = torch.device("cuda:0" if args.gpus else "cpu")
     print(f'Device used: {device}')
-
+    if wandb.run is not None:
+      wandb.finish()
     # Resnet pretrained network for knowledge distillation
     resnet18 = AnomalyResnet18()
     resnet18.to(device)
@@ -102,7 +103,7 @@ def train(args):
             print(f"Loss decreased: {min_running_loss} -> {running_loss}.")
             print(f"Accuracy: {accuracy}")
             print(f"Model saved to {model_name}.")
-
+        wandb.log({"Accuracy": 100. * accuracy, "Test Loss": running_loss})
         min_running_loss = min(min_running_loss, running_loss)
         running_loss = 0.0
 
