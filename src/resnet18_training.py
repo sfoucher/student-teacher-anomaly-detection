@@ -29,7 +29,7 @@ def parse_arguments():
     parser.add_argument('--num_workers', type=int, default=4)
     parser.add_argument('--learning_rate', type=float, default=1e-3)
     parser.add_argument('--momentum', type=float, default=0.9)
-
+    parser.add_argument('--depth', type=float, default=17) # depth of fine tuning (2= head only, 17= last block+head, 32=2 last blocks+head)
     args = parser.parse_args()
     return args
 def freeze_layers(model, n_max= 0, learning_rate= 1e-3):
@@ -70,9 +70,9 @@ def train(args):
 
     # Loading saved model
     model_name = f'../model/{args.dataset}/resnet18.pt'
-    #load_model(resnet18, model_name)
+    load_model(resnet18, model_name)
   
-    params_to_update= freeze_layers(resnet18, n_max= 17+15, learning_rate= args.learning_rate)
+    params_to_update= freeze_layers(resnet18, n_max= args.depth, learning_rate= args.learning_rate)
     # Define optimizer and loss function
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(params_to_update, #resnet18.parameters(), 
